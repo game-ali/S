@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Saved Inspection Reports</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    input { padding: 8px; width: 100%; margin-bottom: 15px; }
+    .report {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-bottom: 15px;
+      cursor: pointer;
+      background-color: #f9f9f9;
+    }
+    .report:hover {
+      background-color: #e0f7fa;
+    }
+  </style>
+</head>
+<body>
+  <h2>📋 All Saved Inspection Reports</h2>
+
+  <input type="text" id="searchInput" placeholder="Search by Track Number..." oninput="filterReports()">
+  <div id="reportList"></div>
+
+  <script>
+    const entries = JSON.parse(localStorage.getItem('vehicleEntries')) || [];
+    const container = document.getElementById('reportList');
+
+    function renderReports(filteredEntries) {
+      container.innerHTML = "";
+      if (filteredEntries.length === 0) {
+        container.innerHTML = "<p>No matching reports found.</p>";
+        return;
+      }
+
+      filteredEntries.forEach((entry, index) => {
+        const report = `
+          <div class="report" onclick="editReport(${index})">
+            <strong>Report #${index + 1}</strong><br>
+            Date: ${entry.date}<br>
+            Track No: ${entry.trackNo}<br>
+            Webery: ${entry.webery}<br>
+            Webery No: ${entry.weberyNo}<br>
+            Quantity: ${entry.quantity}<br>
+            Expenses: GHS ${entry.expenses}<br>
+            <em>Click to edit</em>
+          </div>
+        `;
+        container.innerHTML += report;
+      });
+    }
+
+    function filterReports() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const filtered = entries.filter(entry =>
+        entry.trackNo.toLowerCase().includes(query)
+      );
+      renderReports(filtered);
+    }
+
+    function editReport(index) {
+      window.location.href = `index.html?edit=${index}`;
+    }
+
+    // Initial render
+    renderReports(entries);
+  </script>
+</body>
+</html>
